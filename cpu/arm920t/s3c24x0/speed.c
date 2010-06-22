@@ -64,6 +64,12 @@ static ulong get_PLLCLK(int pllreg)
 	p = ((r & 0x003F0) >> 4) + 2;
 	s = r & 0x3;
 
+#ifdef CONFIG_S3C2440
+	if (pllreg == MPLL) {
+		return ((CONFIG_SYS_CLK_FREQ * m * 2) / (p << s));
+	}
+#endif
+
 	return (CONFIG_SYS_CLK_FREQ * m) / (p << s);
 }
 
@@ -77,6 +83,30 @@ ulong get_FCLK(void)
 ulong get_HCLK(void)
 {
 	struct s3c24x0_clock_power *clk_power = s3c24x0_get_base_clock_power();
+
+#ifdef CONFIG_S3C2440
+{
+	ulong hdivn = (readl(&clk_power->CLKDIVN) & 0x6) >> 1;
+	ulong camdivn = readl(&clk_power->CAMDIVN);
+	
+	switch(hdivn) {
+	case 0:
+		return get_FCLK();
+	case 1:
+		return get_FCLK()/2;
+	case 2:
+		if (camdivn & (1<<9))
+			return get_FCLK()/8;
+		else
+			return get_FCLK()/4;
+	case 3:
+		if (camdivn & (1<<8))
+			return get_FCLK()/6;
+		else
+			return get_FCLK()/3;
+	}
+}
+#endif
 
 	return (readl(&clk_power->CLKDIVN) & 2) ? get_FCLK() / 2 : get_FCLK();
 }

@@ -122,6 +122,9 @@ struct s3c24x0_clock_power {
 	u32	CLKCON;
 	u32	CLKSLOW;
 	u32	CLKDIVN;
+#ifdef CONFIG_S3C2440
+	u32 CAMDIVN;
+#endif
 };
 
 
@@ -397,7 +400,7 @@ struct s3c24x0_gpio {
 	u32	MISCCR;
 	u32	EXTINT;
 #endif
-#ifdef CONFIG_S3C2410
+#if defined(CONFIG_S3C2410) || defined(CONFIG_S3C2440)
 	u32	GPACON;
 	u32	GPADAT;
 	u32	res1[2];
@@ -429,7 +432,6 @@ struct s3c24x0_gpio {
 	u32	GPHDAT;
 	u32	GPHUP;
 	u32	res8;
-
 	u32	MISCCR;
 	u32	DCLKCON;
 	u32	EXTINT0;
