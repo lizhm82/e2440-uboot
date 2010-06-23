@@ -119,7 +119,8 @@
 /*
  * Command line configuration.
  */
-//#include <config_cmd_default.h>
+#define CONFIG_SYS_NO_FLASH
+#include <config_cmd_default.h>
 
 #define CONFIG_CMD_CACHE
 #define CONFIG_CMD_DATE
@@ -184,7 +185,6 @@
 /*-----------------------------------------------------------------------
  * NAND and environment organization
  */
-#define CONFIG_SYS_NO_FLASH
 
 
 //#define	CONFIG_ENV_IS_IN_NAND	1
@@ -196,7 +196,7 @@
 //-----------------Nand SPL ----------------
 //
 #define CONFIG_SYS_NAND_U_BOOT_OFFS		(4 * 1024)		/* Offset to U-Boot image in Nand*/
-#define CONFIG_SYS_NAND_U_BOOT_SIZE		KiB(126)	/* Size of U-Boot image in Nand */
+#define CONFIG_SYS_NAND_U_BOOT_SIZE		KiB(254)	/* Size of U-Boot image in Nand */
 
 #define CONFIG_SYS_NAND_U_BOOT_DST		CONFIG_SYS_PHY_UBOOT_BASE	/* NUB load-addr in SDRAM */
 #define CONFIG_SYS_NAND_U_BOOT_START	CONFIG_SYS_NAND_U_BOOT_DST	/* NUB start-addr in SDRAM  */
