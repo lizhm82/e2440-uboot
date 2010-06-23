@@ -48,19 +48,17 @@
 /*
  * e2440 board specific data
  */
-
-// base address for u-boot
-#define CONFIG_SYS_PHY_UBOOT_BASE		(CONFIG_SYS_SDRAM_BASE + 0x03f80000)	
-// total memory available for uboot
-#define CONFIG_SYS_UBOOT_SIZE			KiB(512)		
-
 /* input clock of PLL */
-#define CONFIG_SYS_CLK_FREQ		MHz(12)	/* the e2440 has 12MHz input clock */
+#define CONFIG_SYS_CLK_FREQ		MHz(12)		/* the e2440 has 12MHz input clock */
+
+#define CONFIG_SYS_PHY_UBOOT_BASE		(CONFIG_SYS_SDRAM_BASE + 0x03f80000)	// base address for u-boot
+#define CONFIG_SYS_UBOOT_SIZE			KiB(512)			// total memory available for uboot
 
 
 #define USE_920T_MMU		1
 #undef CONFIG_USE_IRQ			/* we don't need IRQ/FIQ stuff */
 
+#define	CONFIG_SYS_HZ			1000
 /*
  * Size of malloc() pool
  */
@@ -70,16 +68,26 @@
 /*
  * Hardware drivers
  */
+
+/*
+ * Ethernet support
+ */
+#define CONFIG_CMD_NET
 #define CONFIG_NET_MULTI
+
 #define CONFIG_CS8900		/* we have a CS8900 on-board */
-#define CONFIG_CS8900_BASE	0x19000300
-#define CONFIG_CS8900_BUS16	/* the Linux driver does accesses as shorts */
+#define CONFIG_CS8900_BASE		0x19000000
+#define CONFIG_CS8900_BUS16
+
 
 /*
  * select serial console configuration
  */
 #define CONFIG_S3C24X0_SERIAL
 #define CONFIG_SERIAL1          1	/* we use SERIAL 1 on e2440 */
+#define CONFIG_BAUDRATE		115200
+/* valid baudrates */
+#define CONFIG_SYS_BAUDRATE_TABLE	{ 9600, 19200, 38400, 57600, 115200 }
 
 /*
  * Nand Flash support
@@ -104,37 +112,24 @@
 /* allow to overwrite serial and ethaddr */
 #define CONFIG_ENV_OVERWRITE
 
-#define CONFIG_BAUDRATE		115200
 
 
 /*
  * BOOTP options
  */
-#define CONFIG_BOOTP_BOOTFILESIZE
-#define CONFIG_BOOTP_BOOTPATH
-#define CONFIG_BOOTP_GATEWAY
-#define CONFIG_BOOTP_HOSTNAME
-
-
-/*
- * Command line configuration.
- */
-#define CONFIG_SYS_NO_FLASH
-#include <config_cmd_default.h>
-
-#define CONFIG_CMD_CACHE
-#define CONFIG_CMD_DATE
-#define CONFIG_CMD_ELF
-
+//#define CONFIG_BOOTP_BOOTFILESIZE
+//#define CONFIG_BOOTP_BOOTPATH
+//#define CONFIG_BOOTP_GATEWAY
+//#define CONFIG_BOOTP_HOSTNAME
 
 #define CONFIG_BOOTDELAY	3
-/*#define CONFIG_BOOTARGS	"root=ramfs devfs=mount console=ttySA0,9600" */
-/*#define CONFIG_ETHADDR	08:00:3e:26:0a:5b */
+#define CONFIG_ETHADDR		08:00:3e:26:0a:5b 
 #define CONFIG_NETMASK          255.255.255.0
-#define CONFIG_IPADDR		10.0.0.110
-#define CONFIG_SERVERIP		10.0.0.1
-/*#define CONFIG_BOOTFILE	"elinos-lart" */
-/*#define CONFIG_BOOTCOMMAND	"tftp; bootm" */
+#define CONFIG_IPADDR		172.16.17.179
+#define CONFIG_SERVERIP		172.16.17.152
+#define CONFIG_BOOTFILE		"uImage" 
+#define CONFIG_BOOTCOMMAND	"tftpboot; bootm" 
+#define	CONFIG_SYS_LOAD_ADDR		(CONFIG_SYS_SDRAM_BASE + 0x8000)	/* default load address	*/
 
 #if defined(CONFIG_CMD_KGDB)
 #define CONFIG_KGDB_BAUDRATE	115200		/* speed to run kgdb serial port */
@@ -155,14 +150,9 @@
 #define CONFIG_SYS_MEMTEST_START	0x30000000	/* memtest works on	*/
 #define CONFIG_SYS_MEMTEST_END		0x33F00000	/* 63 MB in DRAM	*/
 
-#define	CONFIG_SYS_LOAD_ADDR		0x33000000	/* default load address	*/
-
-#define	CONFIG_SYS_HZ			1000
 
 #define CONFIG_AUTO_COMPLETE
 #define CONFIG_CMDLINE_EDITING			/* cmd history */
-/* valid baudrates */
-#define CONFIG_SYS_BAUDRATE_TABLE	{ 9600, 19200, 38400, 57600, 115200 }
 
 /*-----------------------------------------------------------------------
  * Stack sizes
@@ -185,6 +175,7 @@
 /*-----------------------------------------------------------------------
  * NAND and environment organization
  */
+#define CONFIG_SYS_NO_FLASH
 
 
 //#define	CONFIG_ENV_IS_IN_NAND	1
@@ -216,5 +207,27 @@
 #define CONFIG_SYS_NAND_OOBSIZE		16
 #define CONFIG_SYS_NAND_ECCTOTAL	(CONFIG_SYS_NAND_ECCBYTES * CONFIG_SYS_NAND_ECCSTEPS)
 #define CONFIG_SYS_NAND_ECCPOS		{0, 1, 2, 3, 6, 7}
+
+/*
+ * Linux Boot
+ */
+#define CONFIG_CMDLINE_TAG
+#define CONFIG_SETUP_MEMORY_TAGS
+#define CONFIG_BOOTARGS     "console=ttyS0,115200n8 root=/dev/nfs rw nfsroot=172.16.17.152:/nfsboot ip=dhcp rdinit=/linuxrc mem=128M"
+
+/*
+ * U-BOOT commands
+ */
+#define CONFIG_CMD_LOADB
+#define CONFIG_CMD_MEMORY
+#define CONFIG_CMD_SAVEENV
+
+#define CONFIG_CMD_NFS
+#define CONFIG_CMD_PING
+#define CONFIG_CMD_DHCP
+
+//#define CONFIG_CMD_CACHE
+//#define CONFIG_CMD_DATE
+//#define CONFIG_CMD_ELF
 
 #endif	/* __CONFIG_H */

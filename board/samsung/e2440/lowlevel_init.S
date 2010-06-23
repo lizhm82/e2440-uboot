@@ -51,8 +51,6 @@
 #define WAIT			(0x1<<2)
 #define UBLB			(0x1<<3)
 
-#if 1
-/* BusWidth 32 */
 #define B1_BWSCON		(DW16)
 #define B2_BWSCON		(DW16)
 #define B3_BWSCON		(DW16 + WAIT + UBLB)
@@ -60,15 +58,6 @@
 #define B5_BWSCON		(DW16)
 #define B6_BWSCON		(DW32)
 #define B7_BWSCON		(DW32)
-#else
-#define B1_BWSCON		(DW16)
-#define B2_BWSCON		(DW16)
-#define B3_BWSCON		(DW16)
-#define B4_BWSCON		(DW16)
-#define B5_BWSCON		(DW16)
-#define B6_BWSCON		(DW16)
-#define B7_BWSCON		(DW16)
-#endif
 
 /* BANK0CON */
 #define B0_Tacs			0x0	/*  0clk */
@@ -96,12 +85,12 @@
 #define B2_Tacp			0x0
 #define B2_PMC			0x0
 
-#define B3_Tacs			0x1	/*  0clk */
-#define B3_Tcos			0x1	/*  4clk */
-#define B3_Tacc			0x6	/* 14clk */
+#define B3_Tacs			0x0	/*  0clk */
+#define B3_Tcos			0x3	/*  4clk */
+#define B3_Tacc			0x7	/* 14clk */
 #define B3_Tcoh			0x1	/*  1clk */
-#define B3_Tah			0x1	/*  0clk */
-#define B3_Tacp			0x0     /*  6clk */
+#define B3_Tah			0x0	/*  0clk */
+#define B3_Tacp			0x3     /*  6clk */
 #define B3_PMC			0x0	/* normal */
 
 #define B4_Tacs			0x1	/*  0clk */
