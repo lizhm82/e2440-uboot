@@ -3046,7 +3046,11 @@ smdk2410_config	:	unconfig
 	@$(MKCONFIG) $(@:_config=) arm arm920t smdk2410 samsung s3c24x0
 
 e2440_config	:	unconfig
+	@mkdir -p $(obj)include $(obj)board/samsung/e2440
+	@mkdir -p $(obj)nand_spl/board/samsung/e2440
+	@echo "#define CONFIG_NAND_U_BOOT" > $(obj)include/config.h
 	@$(MKCONFIG) $(@:_config=) arm arm920t e2440 samsung s3c24x0
+	@echo "CONFIG_NAND_U_BOOT = y" >> $(obj)include/config.mk
 
 spear300_config \
 spear310_config \

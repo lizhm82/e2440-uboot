@@ -141,6 +141,7 @@ static int nand_is_bad_block(struct mtd_info *mtd, int block)
 
 static int nand_read_page(struct mtd_info *mtd, int block, int page, uchar *dst)
 {
+#ifdef READ_WITH_ECC
 	struct nand_chip *this = mtd->priv;
 	u_char *ecc_calc;
 	u_char *ecc_code;
@@ -182,7 +183,14 @@ static int nand_read_page(struct mtd_info *mtd, int block, int page, uchar *dst)
 		 */
 		stat = this->ecc.correct(mtd, p, &ecc_code[i], &ecc_calc[i]);
 	}
+#else
+	struct nand_chip *this = mtd->priv;
+	uint8_t *p = dst;
+	
+	nand_command(mtd, block, page, 0, NAND_CMD_READ0);
+	this->read_buf(mtd, p, CONFIG_SYS_NAND_PAGE_SIZE);
 
+#endif
 	return 0;
 }
 

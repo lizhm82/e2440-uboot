@@ -16,6 +16,8 @@
 #
 # download area is 3300'0000
 #
-
-
+ifndef CONFIG_NAND_SPL
 TEXT_BASE = 0x33F80000
+else
+TEXT_BASE = 0
+endif

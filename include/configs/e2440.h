@@ -42,6 +42,18 @@
 #define CONFIG_S3C2440	1	/* specifically a SAMSUNG S3C2440 SoC	*/
 #define CONFIG_E2440	1	/* on a e2440 Board  */
 
+#define CONFIG_SYS_SDRAM_BASE		(0x30000000)	// physical memory start address
+
+
+/*
+ * e2440 board specific data
+ */
+
+// base address for u-boot
+#define CONFIG_SYS_PHY_UBOOT_BASE		(CONFIG_SYS_SDRAM_BASE + 0x03f80000)	
+// total memory available for uboot
+#define CONFIG_SYS_UBOOT_SIZE			KiB(512)		
+
 /* input clock of PLL */
 #define CONFIG_SYS_CLK_FREQ		MHz(12)	/* the e2440 has 12MHz input clock */
 
@@ -69,6 +81,21 @@
 #define CONFIG_S3C24X0_SERIAL
 #define CONFIG_SERIAL1          1	/* we use SERIAL 1 on e2440 */
 
+/*
+ * Nand Flash support
+ */
+#define CONFIG_CMD_NAND
+#define CONFIG_NAND_S3C2440
+#define CONFIG_SYS_MAX_NAND_DEVICE		1	/* Max number of NAND devices */
+#define CONFIG_SYS_NAND_BASE 	0x4e000010
+
+//#define CONFIG_S3C2440_NAND_HWECC
+
+#ifdef CONFIG_S3C2440_NAND_HWECC
+#define CONFIG_SYS_NAND_ECCSIZE 	256		//??
+#define CONFIG_SYS_NAND_ECCBYTES    3		//??
+#endif
+
 /************************************************************
  * RTC
  ************************************************************/
@@ -92,7 +119,7 @@
 /*
  * Command line configuration.
  */
-#include <config_cmd_default.h>
+//#include <config_cmd_default.h>
 
 #define CONFIG_CMD_CACHE
 #define CONFIG_CMD_DATE
@@ -131,6 +158,8 @@
 
 #define	CONFIG_SYS_HZ			1000
 
+#define CONFIG_AUTO_COMPLETE
+#define CONFIG_CMDLINE_EDITING			/* cmd history */
 /* valid baudrates */
 #define CONFIG_SYS_BAUDRATE_TABLE	{ 9600, 19200, 38400, 57600, 115200 }
 
@@ -149,39 +178,43 @@
  * Physical Memory Map
  */
 #define CONFIG_NR_DRAM_BANKS	1	   /* we have 1 bank of DRAM */
-#define PHYS_SDRAM_1		0x30000000 /* SDRAM Bank #1 */
-#define PHYS_SDRAM_1_SIZE	0x04000000 /* 64 MB */
-
-#define PHYS_FLASH_1		0x00000000 /* Flash Bank #1 */
-
-#define CONFIG_SYS_FLASH_BASE		PHYS_FLASH_1
+#define PHYS_SDRAM_1		(CONFIG_SYS_SDRAM_BASE) /* SDRAM Bank #1 */
+#define PHYS_SDRAM_1_SIZE	MiB(64)	 /* 64 MB */
 
 /*-----------------------------------------------------------------------
- * FLASH and environment organization
+ * NAND and environment organization
  */
+#define CONFIG_SYS_NO_FLASH
 
-#define CONFIG_AMD_LV400	1	/* uncomment this if you have a LV400 flash */
-#if 0
-#define CONFIG_AMD_LV800	1	/* uncomment this if you have a LV800 flash */
-#endif
 
-#define CONFIG_SYS_MAX_FLASH_BANKS	1	/* max number of memory banks */
-#ifdef CONFIG_AMD_LV800
-#define PHYS_FLASH_SIZE		0x00100000 /* 1MB */
-#define CONFIG_SYS_MAX_FLASH_SECT	(19)	/* max number of sectors on one chip */
-#define CONFIG_ENV_ADDR		(CONFIG_SYS_FLASH_BASE + 0x0F0000) /* addr of environment */
-#endif
-#ifdef CONFIG_AMD_LV400
-#define PHYS_FLASH_SIZE		0x00080000 /* 512KB */
-#define CONFIG_SYS_MAX_FLASH_SECT	(11)	/* max number of sectors on one chip */
-#define CONFIG_ENV_ADDR		(CONFIG_SYS_FLASH_BASE + 0x070000) /* addr of environment */
-#endif
+//#define	CONFIG_ENV_IS_IN_NAND	1
+#define CONFIG_ENV_IS_NOWHERE		1
 
-/* timeout values are in ticks */
-#define CONFIG_SYS_FLASH_ERASE_TOUT	(5*CONFIG_SYS_HZ) /* Timeout for Flash Erase */
-#define CONFIG_SYS_FLASH_WRITE_TOUT	(5*CONFIG_SYS_HZ) /* Timeout for Flash Write */
-
-#define	CONFIG_ENV_IS_IN_FLASH	1
+#define CONFIG_ENV_OFFSET		0x0040000
 #define CONFIG_ENV_SIZE		0x10000	/* Total Size of Environment Sector */
+
+//-----------------Nand SPL ----------------
+//
+#define CONFIG_SYS_NAND_U_BOOT_OFFS		(4 * 1024)		/* Offset to U-Boot image in Nand*/
+#define CONFIG_SYS_NAND_U_BOOT_SIZE		KiB(126)	/* Size of U-Boot image in Nand */
+
+#define CONFIG_SYS_NAND_U_BOOT_DST		CONFIG_SYS_PHY_UBOOT_BASE	/* NUB load-addr in SDRAM */
+#define CONFIG_SYS_NAND_U_BOOT_START	CONFIG_SYS_NAND_U_BOOT_DST	/* NUB start-addr in SDRAM  */
+
+/*
+ * Now the NAND chip has to be defined (no autodetection used!)
+ */
+#define CONFIG_SYS_NAND_PAGE_SIZE		512		/* NAND chip page size		*/
+#define CONFIG_SYS_NAND_BLOCK_SIZE		KiB(16)		/* NAND chip block size		*/
+#define CONFIG_SYS_NAND_PAGE_COUNT		32		/* NAND chip page per block count  */
+#define CONFIG_SYS_NAND_BAD_BLOCK_POS	5		/* Location of the bad-block label */
+#define CONFIG_SYS_NAND_4_ADDR_CYCLE	1		/* Fourth addr used (>32MB)	*/
+
+#define CONFIG_SYS_NAND_ECCSIZE		256
+#define CONFIG_SYS_NAND_ECCBYTES	3
+#define CONFIG_SYS_NAND_ECCSTEPS	(CONFIG_SYS_NAND_PAGE_SIZE / CONFIG_SYS_NAND_ECCSIZE)
+#define CONFIG_SYS_NAND_OOBSIZE		16
+#define CONFIG_SYS_NAND_ECCTOTAL	(CONFIG_SYS_NAND_ECCBYTES * CONFIG_SYS_NAND_ECCSTEPS)
+#define CONFIG_SYS_NAND_ECCPOS		{0, 1, 2, 3, 6, 7}
 
 #endif	/* __CONFIG_H */

@@ -38,6 +38,27 @@
 
 .globl _start
 _start:	b	start_code
+#ifdef CONFIG_PRELOADER
+/* No exception handlers in preloader */
+	ldr	pc, _hang
+	ldr	pc, _hang
+	ldr	pc, _hang
+	ldr	pc, _hang
+	ldr	pc, _hang
+	ldr	pc, _hang
+	ldr	pc, _hang
+
+_hang:
+	.word	do_hang
+/* pad to 64 byte boundary */
+	.word	0x12345678
+	.word	0x12345678
+	.word	0x12345678
+	.word	0x12345678
+	.word	0x12345678
+	.word	0x12345678
+	.word	0x12345678
+#else
 	ldr	pc, _undefined_instruction
 	ldr	pc, _software_interrupt
 	ldr	pc, _prefetch_abort
@@ -54,6 +75,7 @@ _not_used:		.word not_used
 _irq:			.word irq
 _fiq:			.word fiq
 
+#endif	/* CONFIG_PRELOADER */
 	.balignl 16,0xdeadbeef
 
 
@@ -114,8 +136,10 @@ start_code:
 	orr	r0, r0, #0xd3
 	msr	cpsr, r0
 
+#ifndef CONFIG_PRELOADER
 	bl	coloured_LED_init
 	bl	red_LED_on
+#endif /* CONFIG_PRELOADER */
 
 #if	defined(CONFIG_AT91RM9200DK) || defined(CONFIG_AT91RM9200EK)
 	/*
@@ -212,11 +236,20 @@ copy_loop:
 	/* Set up the stack						    */
 stack_setup:
 	ldr	r0, _TEXT_BASE		/* upper 128 KiB: relocated uboot   */
+#ifndef CONFIG_PRELOADER
 	sub	r0, r0, #CONFIG_SYS_MALLOC_LEN	/* malloc area              */
 	sub	r0, r0, #CONFIG_SYS_GBL_DATA_SIZE /* bdinfo                 */
 #ifdef CONFIG_USE_IRQ
 	sub	r0, r0, #(CONFIG_STACKSIZE_IRQ+CONFIG_STACKSIZE_FIQ)
 #endif
+
+#else
+
+#ifdef CONFIG_E2440
+	ldr	r0, =CONFIG_SYS_NAND_U_BOOT_DST 	 	
+#endif
+
+#endif /* CONFIG_PRELOADER */
 	sub	sp, r0, #12		/* leave 3 words for abort-stack    */
 
 clear_bss:
@@ -231,8 +264,12 @@ clbss_l:str	r2, [r0]		/* clear loop...                    */
 
 	ldr	pc, _start_armboot
 
-_start_armboot:	.word start_armboot
-
+_start_armboot:	
+#ifdef CONFIG_NAND_SPL
+	.word nand_boot
+#else
+	.word start_armboot
+#endif /* CONFIG_NAND_SPL */
 
 /*
  *************************************************************************
@@ -278,6 +315,7 @@ cpu_init_crit:
 	mov	pc, lr
 #endif /* CONFIG_SKIP_LOWLEVEL_INIT */
 
+#ifndef CONFIG_PRELOADER
 /*
  *************************************************************************
  *
@@ -382,10 +420,18 @@ cpu_init_crit:
 	.macro get_fiq_stack			@ setup FIQ stack
 	ldr	sp, FIQ_STACK_START
 	.endm
+#endif	/* CONFIG_PRELOADER */
 
 /*
  * exception handlers
  */
+#ifdef CONFIG_PRELOADER
+	.align	5
+do_hang:
+	ldr	sp, _TEXT_BASE			/* switch to abort stack */
+1:
+	bl	1b				/* hang and never return */
+#else	/* !CONFIG_PRELOADER */
 	.align  5
 undefined_instruction:
 	get_bad_stack
@@ -448,3 +494,4 @@ fiq:
 	bl	do_fiq
 
 #endif
+#endif	/* CONFIG_PRELOADER */
