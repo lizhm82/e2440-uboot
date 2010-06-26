@@ -2699,6 +2699,7 @@ extern unsigned int __machine_arch_type;
 #define MACH_TYPE_MX53_EVK             2716
 #define MACH_TYPE_IGEP0030             2717
 #define MACH_TYPE_AXELL_H40_H50_CTRL   2718
+#define MACH_TYPE_E2440                2820
 
 #ifdef CONFIG_ARCH_EBSA110
 # ifdef machine_arch_type
@@ -34944,6 +34945,17 @@ extern unsigned int __machine_arch_type;
 # define machine_is_axell_h40_h50_ctrl()	(0)
 #endif
 
+#ifdef CONFIG_MACH_E2440
+# ifdef machine_arch_type
+#  undef machine_arch_type
+#  define machine_arch_type	__machine_arch_type
+# else
+#  define machine_arch_type	MACH_TYPE_E2440
+# endif
+# define machine_is_e2440()	(machine_arch_type == MACH_TYPE_E2440)
+#else
+# define machine_is_e2440()	(0)
+#endif
 /*
  * These have not yet been registered
  */

@@ -125,11 +125,11 @@
 #define CONFIG_BOOTDELAY	3
 #define CONFIG_ETHADDR		08:00:3e:26:0a:5b 
 #define CONFIG_NETMASK          255.255.255.0
-#define CONFIG_IPADDR		172.16.17.179
+#define CONFIG_IPADDR		172.16.17.209
 #define CONFIG_SERVERIP		172.16.17.152
 #define CONFIG_BOOTFILE		"uImage" 
 #define CONFIG_BOOTCOMMAND	"tftpboot; bootm" 
-#define	CONFIG_SYS_LOAD_ADDR		(CONFIG_SYS_SDRAM_BASE + 0x8000)	/* default load address	*/
+#define	CONFIG_SYS_LOAD_ADDR		(CONFIG_SYS_SDRAM_BASE + 0x8000 - 64)	/* default load address	*/
 
 #if defined(CONFIG_CMD_KGDB)
 #define CONFIG_KGDB_BAUDRATE	115200		/* speed to run kgdb serial port */
@@ -211,9 +211,10 @@
 /*
  * Linux Boot
  */
+#define CONFIG_BOOT_PARAM_OFFSET		(0x100)
 #define CONFIG_CMDLINE_TAG
 #define CONFIG_SETUP_MEMORY_TAGS
-#define CONFIG_BOOTARGS     "console=ttyS0,115200n8 root=/dev/nfs rw nfsroot=172.16.17.152:/nfsboot ip=dhcp rdinit=/linuxrc mem=128M"
+#define CONFIG_BOOTARGS     "console=ttySAC0,115200n8 root=/dev/nfs rw nfsroot=172.16.17.152:/nfsboot ip=dhcp rdinit=/linuxrc"
 
 /*
  * U-BOOT commands
