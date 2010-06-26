@@ -178,11 +178,11 @@
 #define CONFIG_SYS_NO_FLASH
 
 
-//#define	CONFIG_ENV_IS_IN_NAND	1
-#define CONFIG_ENV_IS_NOWHERE		1
+#define	CONFIG_ENV_IS_IN_NAND	1
+//#define CONFIG_ENV_IS_NOWHERE		1
 
-#define CONFIG_ENV_OFFSET		0x0040000
-#define CONFIG_ENV_SIZE		0x10000	/* Total Size of Environment Sector */
+#define CONFIG_ENV_OFFSET		KiB(256)
+#define CONFIG_ENV_SIZE			KiB(128)	/* Total Size of Environment Sector */
 
 //-----------------Nand SPL ----------------
 //
