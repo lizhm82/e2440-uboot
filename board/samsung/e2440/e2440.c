@@ -113,7 +113,7 @@ int board_init (void)
 	gpio->GPHCON = 0x002AFAAA;
 	gpio->GPHUP = 0x000007FF;
 
-	/* arch number of SMDK2410-Board */
+	/* arch number of e2440 board */
 	gd->bd->bi_arch_number = MACH_TYPE_E2440;
 
 	/* adress of boot parameters */
@@ -143,3 +143,11 @@ int board_eth_init(bd_t *bis)
 	return rc;
 }
 #endif
+
+#ifdef CONFIG_S3C2440_MCI
+int board_mmc_init(bd_t *bis)
+{
+	return s3c2440_mmc_init(bis);
+}
+#endif
+

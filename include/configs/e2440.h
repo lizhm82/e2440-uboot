@@ -90,6 +90,13 @@
 #define CONFIG_SYS_BAUDRATE_TABLE	{ 9600, 19200, 38400, 57600, 115200 }
 
 /*
+ * MMC support
+ */
+#define CONFIG_GENERIC_MMC
+#define CONFIG_MMC
+#define CONFIG_S3C2440_MCI
+
+/*
  * Nand Flash support
  */
 #define CONFIG_CMD_NAND
@@ -230,5 +237,11 @@
 //#define CONFIG_CMD_CACHE
 //#define CONFIG_CMD_DATE
 //#define CONFIG_CMD_ELF
+
+#ifdef CONFIG_MMC
+#  define CONFIG_CMD_FAT
+#  define CONFIG_CMD_MMC
+#  define CONFIG_DOS_PARTITION
+#endif
 
 #endif	/* __CONFIG_H */

@@ -162,6 +162,9 @@ int do_mmcops(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 	case 1:
 	case 4:
 		printf("Usage:\n%s\n", cmdtp->usage);
+#ifdef CONFIG_SYS_LONGHELP		
+		printf("%s\n", cmdtp->help);
+#endif
 		return 1;
 
 	case 2:
