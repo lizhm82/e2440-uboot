@@ -62,7 +62,7 @@
 /*
  * Size of malloc() pool
  */
-#define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE + 128*1024)
+#define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE + KiB(128))
 #define CONFIG_SYS_GBL_DATA_SIZE	128	/* size in bytes reserved for initial data */
 
 /*
@@ -234,14 +234,33 @@
 #define CONFIG_CMD_PING
 #define CONFIG_CMD_DHCP
 
+#define CONFIG_CMD_UBI
+
 //#define CONFIG_CMD_CACHE
 //#define CONFIG_CMD_DATE
 //#define CONFIG_CMD_ELF
 
 #ifdef CONFIG_MMC
 #  define CONFIG_CMD_FAT
+#  define CONFIG_SUPPORT_VFAT
 #  define CONFIG_CMD_MMC
 #  define CONFIG_DOS_PARTITION
+#endif
+
+#ifdef CONFIG_CMD_UBI
+#  define CONFIG_CMD_MTDPARTS
+#  define CONFIG_MTD_DEVICE
+#  define CONFIG_MTD_PARTITIONS
+#  define CONFIG_RBTREE
+
+#  if (CONFIG_SYS_MALLOC_LEN < KiB(512))
+#    undef CONFIG_SYS_MALLOC_LEN
+#    define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE + KiB(1024))	//if enable UBI, CONFIG_SYS_MALLOC_LEN should > 512K
+#  endif
+
+#define MTDIDS_DEFAULT "nand0=e2440_nand"
+#define MTDPARTS_DEFAULT "mtdparts=e2440_nand:48M@0x00700000(system),8M@0x03700000(data)"
+
 #endif
 
 #endif	/* __CONFIG_H */

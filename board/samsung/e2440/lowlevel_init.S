@@ -131,6 +131,7 @@ _TEXT_BASE:
 
 .globl lowlevel_init
 lowlevel_init:
+#ifdef CONFIG_PRELOADER
 	/* memory control configuration */
 	/* make r0 relative the current location so that it */
 	/* reads SMRDATA out of FLASH rather than memory ! */
@@ -174,3 +175,6 @@ SMRDATA:
     .word 0x32
     .word 0x30
     .word 0x30
+#else
+	mov	pc, lr
+#endif	/* CONFIG_PRELOADER */
