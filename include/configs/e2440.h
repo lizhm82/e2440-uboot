@@ -29,7 +29,7 @@
 #ifndef __CONFIG_H
 #define __CONFIG_H
 
-#define MHz(x)		((x) << 20)
+#define MHz(x)		((x) * 1000 * 1000)
 #define MiB(x)		((x) << 20)
 #define KiB(x)		((x) << 10)
 
